@@ -6,8 +6,8 @@ using UnityEngine;
 public class PlayerControls : MonoBehaviour
 {
     [Header("Walk")]
-    [SerializeField] private Vector2 walkForce = Vector2.one;
-    [SerializeField] private ForceMode2D walkForceMode = ForceMode2D.Impulse;
+    [SerializeField] private WalkMethod walkMethod = WalkMethod.AddVelocity;
+    [SerializeField] private Vector2 walkMagnitude = Vector2.one;
     private Vector2 walkDirection = Vector2.zero;
 
     private Rigidbody2D rb2d;
@@ -26,6 +26,30 @@ public class PlayerControls : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb2d.AddForce(walkDirection, walkForceMode);
+        switch (walkMethod)
+        {
+            case WalkMethod.AddForceNormal:
+                rb2d.AddForce(walkDirection * walkMagnitude, ForceMode2D.Force);
+                break;
+            case WalkMethod.AddForceImpulse:
+                rb2d.AddForce(walkDirection * walkMagnitude, ForceMode2D.Impulse);
+                break;
+            case WalkMethod.AddVelocity:
+                rb2d.velocity += walkDirection * walkMagnitude;
+                break;
+            case WalkMethod.SetVelocity:
+                rb2d.velocity = walkDirection * walkMagnitude;
+                break;
+            default:
+                break;
+        }
     }
+}
+
+enum WalkMethod
+{
+    AddForceNormal,
+    AddForceImpulse,
+    AddVelocity,
+    SetVelocity,
 }

@@ -213,6 +213,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2119685637964449471, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
+      propertyPath: walkForce.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -2119685637964449471, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
+      propertyPath: walkForce.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -2119685637964449471, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
+      propertyPath: walkForceMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7766016242766568197, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
       propertyPath: m_RootOrder
       value: 2
