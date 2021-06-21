@@ -29,6 +29,11 @@ public class Ship : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collider)
     {
         currentVelocity = 0f;
+        Spawner spawner = GetComponent<Spawner>();
+        if (spawner != null)
+        {
+            spawner.Spawn();
+        }
         SailAway();
     }
 }
