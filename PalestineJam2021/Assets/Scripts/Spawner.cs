@@ -8,8 +8,8 @@ public class Spawner : MonoBehaviour
     // TODO spawnRadius is same as targetRadius in SwarmMovement.cs
     [SerializeField] private float spawnRadius = 3f;
     [SerializeField] private GameObject prefab;
-
-    void Start()
+    
+    protected internal void Spawn()
     {
         for (int i = 0; i < number; i++)
         {
