@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7766016242766568219}
   - component: {fileID: 7766016242766568218}
   - component: {fileID: -2119685637964449471}
+  - component: {fileID: 58532083}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -73,9 +74,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: e7c60d0a983c7674f852be466b5528c6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0.50980395, b: 0.03137255, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -136,3 +137,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkMethod: 2
   walkMagnitude: {x: 100, y: 100}
+  trapLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  slowFactor: 0.5
+  trappedSeconds: 2
+  slowSecondsAfterTrap: 5
+  evictionVelocity: 100
+  evictionDuration: 0.3
+--- !u!58 &58532083
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7766016242766568217}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5

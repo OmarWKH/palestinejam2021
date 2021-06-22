@@ -15,4 +15,9 @@ public class ScenarioManager : MonoBehaviour
             ship.Sail();
         }
     }
+
+    void StartOccupation()
+    {
+        
+    }
 }
