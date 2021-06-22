@@ -45,7 +45,10 @@ public class SwarmMovement : MonoBehaviour
     void FixedUpdate()
     {
         // TODO randomize velocity
-        transform.position += (target - transform.position) * velocity * Time.fixedDeltaTime;
+        // TODO BUG zionist stops at 1 away instead of 0.1
+        Vector3 direction = target - transform.position;
+        Vector3 change = direction * velocity * Time.fixedDeltaTime;
+        transform.position += change;
     }
     
     void OnDrawGizmos()
