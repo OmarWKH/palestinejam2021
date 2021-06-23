@@ -34,7 +34,6 @@ public class ScenarioManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(Time.time);
         if (!zionistsAssembled && Time.time >= zionistAssemblyTime)
         {
             zionistsAssembled = true;
@@ -78,7 +77,6 @@ public class ScenarioManager : MonoBehaviour
 
     void SpawnTrap()
     {
-        Debug.Log("spawning");
         trap = Instantiate(trapPrefab, Vector3.zero, Quaternion.identity);
     }
 
@@ -111,6 +109,6 @@ public class ScenarioManager : MonoBehaviour
     void StartOccupation()
     {
         Destroy(trap);
-        FindObjectOfType<SoliderMap>().expanding = true;
+        FindObjectOfType<SoliderMap>().StartExpanding();
     }
 }

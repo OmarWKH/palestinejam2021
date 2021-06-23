@@ -121,7 +121,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &-2119685637964449471
 MonoBehaviour:
@@ -137,6 +137,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkMethod: 2
   walkMagnitude: {x: 100, y: 100}
+  dashForce: 300
+  maxShrink: 1
   trapLayers:
     serializedVersion: 2
     m_Bits: 8

@@ -573,6 +573,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ScenarioManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5344074379570608082, guid: 049c6b207f83b4b47a59ab3050133fea, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5344074379570608083, guid: 049c6b207f83b4b47a59ab3050133fea, type: 3}
       propertyPath: shipsParent
       value: 
@@ -758,6 +762,10 @@ PrefabInstance:
     - target: {fileID: 7766016242766568217, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7766016242766568218, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b680a125684eee4488dfdb8c367b9c0e, type: 3}

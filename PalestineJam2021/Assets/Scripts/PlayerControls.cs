@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,15 @@ public class PlayerControls : MonoBehaviour
     [SerializeField] private WalkMethod walkMethod = WalkMethod.AddVelocity;
     [SerializeField] private Vector2 walkMagnitude = Vector2.one;
     private Vector2 walkDirection = Vector2.zero;
+
+    [Header("Dash")]
+    //[SerializeField] private float dashDuration = 0.3f;
+    [SerializeField] private float dashForce = 300f;
+    [SerializeField] private float maxShrink = 1f;
+    private bool shouldDash = false;
+    private bool dashing = false;
+    private Vector3 dashStartPosition;
+    private Vector3 dashTarget;
 
     [Header("Trap")]
     [SerializeField] private LayerMask trapLayers;
@@ -28,16 +38,19 @@ public class PlayerControls : MonoBehaviour
 
     private Rigidbody2D rb2d;
 
-    // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         walkDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if (!shouldDash)
+        {
+            shouldDash = Input.GetKeyDown(KeyCode.Mouse0);
+        }
+        dashTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     void FixedUpdate()
@@ -46,6 +59,14 @@ public class PlayerControls : MonoBehaviour
         {
             evictTimer = evictionDuration;
             shouldEvict = false;
+            shouldDash = false;
+        }
+        
+        if (shouldDash)
+        {
+            dashing = true;
+            shouldDash = false;
+            dashStartPosition = transform.position;
         }
 
         if (evictTimer > 0f)
@@ -53,7 +74,15 @@ public class PlayerControls : MonoBehaviour
             rb2d.velocity = new Vector2(0, evictionVelocity);
             evictTimer -= Time.fixedDeltaTime;
         }
-        else
+        else if (dashing)
+        {
+            Vector2 direction = dashTarget - transform.position;
+            rb2d.AddForce(direction * dashForce, ForceMode2D.Impulse);
+            if (direction.magnitude <= 0.01f)
+            {
+                dashing = false;
+            }
+        }
         {
             Move(walkDirection, walkMagnitude);
         }
@@ -110,6 +139,22 @@ public class PlayerControls : MonoBehaviour
         {
             trapVelocityFactor = 1f;
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (dashing)
+        {
+            dashing = false;
+
+            SoliderMap map = collision.gameObject.GetComponent<SoliderMap>();
+            if (map != null)
+            {
+                float distance = (transform.position - dashStartPosition).magnitude;
+                map.Scale(-distance/10f * maxShrink);
+            }
+        }
+
     }
 
     void OnTriggerEnter2D(Collider2D collider)
