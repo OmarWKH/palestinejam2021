@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float spawnRadius = 3f;
     [SerializeField] private GameObject prefab;
     
-    protected internal void Spawn()
+    protected internal void Spawn(bool setParent=true)
     {
         for (int i = 0; i < number; i++)
         {
@@ -31,7 +31,16 @@ public class Spawner : MonoBehaviour
                     break;
             }
 
-            GameObject spawned = Instantiate(prefab, position, Quaternion.identity, transform);
+            GameObject spawned;
+            if (setParent)
+            {
+                spawned = Instantiate(prefab, position, Quaternion.identity, transform);
+
+            }
+            else
+            {
+                spawned = Instantiate(prefab, position, Quaternion.identity);
+            }
             spawned.name = $"{prefab.name}_{i}";
         }
     }

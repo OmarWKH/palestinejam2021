@@ -45,3 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   palestineSpawner: {fileID: 0}
   shipsParent: {fileID: 0}
+  trapPrefab: {fileID: 1188339356517263167, guid: eec5110a5ca430c42a54d00a2fd49430, type: 3}

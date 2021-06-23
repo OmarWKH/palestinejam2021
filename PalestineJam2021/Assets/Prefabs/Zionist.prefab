@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 211530648708083255}
   - component: {fileID: 211530648708083250}
   - component: {fileID: 211530648708083249}
+  - component: {fileID: 7126511015687679290}
   m_Layer: 0
   m_Name: Zionist
   m_TagString: Untagged
@@ -71,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: -2413806693520163455, guid: b01eaf3b84bc599488c161613799d6da, type: 3}
   m_Color: {r: 0, g: 0.21960786, b: 0.72156864, a: 1}
   m_FlipX: 0
@@ -98,3 +99,17 @@ MonoBehaviour:
   velocity: 1
   distanceToChangeTarget: 1
   targetSpaceRadius: 3
+  randomizeTarget: 1
+  target: {x: 0.2315188, y: 1.2561927, z: 0}
+--- !u!114 &7126511015687679290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211530648708083254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c5371b298bb7d488d2b959a6384892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

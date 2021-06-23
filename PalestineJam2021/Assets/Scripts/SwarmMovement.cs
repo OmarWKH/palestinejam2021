@@ -13,8 +13,8 @@ public class SwarmMovement : MonoBehaviour
     [SerializeField] private float velocity = 1f;
     [SerializeField] private float distanceToChangeTarget = 0.1f;
     [SerializeField] private float targetSpaceRadius = 3f;
-
-    private Vector3 target = Vector3.zero;
+    [SerializeField] protected internal bool randomizeTarget = true;
+    [SerializeField] protected internal Vector3 target = Vector3.zero;
 
     void OnValidate()
     {
@@ -28,8 +28,11 @@ public class SwarmMovement : MonoBehaviour
 
     void SetTarget()
     {
-        target = Random.insideUnitSphere * targetSpaceRadius;
-        target.z = 0f;
+        if (randomizeTarget)
+        {
+            target = Random.insideUnitSphere * targetSpaceRadius;
+            target.z = 0f;
+        }
     }
     
     void Update()

@@ -9,10 +9,24 @@ public class Ship : MonoBehaviour
 
     private float currentVelocity = 0f;
 
+    void Update()
+    {
+        if (transform.position.x < - 15f) // TODO viewport not 100
+        {
+            Die();
+        }
+    }
+
     void FixedUpdate()
     {
         Vector2 positionChange = sailDirection * currentVelocity * Time.fixedDeltaTime;
         transform.position += new Vector3(positionChange.x, positionChange.y); ;
+    }
+
+    private void Die()
+    {
+        transform.DetachChildren(); // TODO parent them elsewhere
+        Destroy(gameObject);
     }
 
     protected internal void Sail()
@@ -32,7 +46,7 @@ public class Ship : MonoBehaviour
         Spawner spawner = GetComponent<Spawner>();
         if (spawner != null)
         {
-            spawner.Spawn();
+            spawner.Spawn(false);
         }
         SailAway();
     }
