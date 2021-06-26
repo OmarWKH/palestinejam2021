@@ -6,8 +6,10 @@ public class Ship : MonoBehaviour
 {
     [SerializeField] private float velocity = 1f;
     [SerializeField] private Vector2 sailDirection = Vector2.right;
+    [SerializeField] private float waitOnLading = 3f;
 
     private float currentVelocity = 0f;
+    private bool disembarked = false;
 
     void Update()
     {
@@ -37,17 +39,36 @@ public class Ship : MonoBehaviour
     protected internal void SailAway()
     {
         // TODO destroy after it leaves
-        currentVelocity = -velocity;
+        //currentVelocity = -velocity;
+        currentVelocity = velocity;
     }
 
-    void OnTriggerEnter2D(Collider2D collider)
+    protected internal void Disembark()
     {
         currentVelocity = 0f;
+        // TODO the thing coming from the side I forgot the name oh well
         Spawner spawner = GetComponent<Spawner>();
         if (spawner != null)
         {
             spawner.Spawn(false);
+            FindObjectOfType<ScenarioManager>().shouldAssemble = true;
         }
+
+        StartCoroutine(TriggerSailAway());
+    }
+
+    IEnumerator TriggerSailAway()
+    {
+        yield return new WaitForSeconds(waitOnLading);
         SailAway();
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (!disembarked)
+        {
+            disembarked = true;
+            Disembark();
+        }
     }
 }

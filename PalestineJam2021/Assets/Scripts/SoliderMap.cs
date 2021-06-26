@@ -6,18 +6,31 @@ public class SoliderMap : MonoBehaviour
 {
     [SerializeField] private Vector3 expansionSpeed = Vector3.one;
 
-    private bool expanding = false;
+    protected internal bool expanding = false;
 
     void Start()
     {
-        GetComponent<Collider2D>().enabled = false;
+        GetComponent<PolygonCollider2D>().enabled = false;
     }
 
     void FixedUpdate()
     {
-        if (expanding)
+        if (expanding && transform.localScale.y != 10f)
         {
             Scale(expansionSpeed);
+
+            Vector2 size = transform.localScale;
+            size /= 5f;
+            size.x *= 1.5f;
+            //GetComponent<CapsuleCollider2D>().size = size;
+            //GetComponent<SpriteMask>();
+            GetComponent<PolygonCollider2D>().CreatePrimitive(50, new Vector2(0.5f, 0.5f));
+        }
+
+        if (transform.localScale.y >= 10f)
+        {
+            FindObjectOfType<PlayerControls>().endGame = true;
+            FindObjectOfType<ScenarioManager>().StopFights();
         }
     }
 
@@ -40,12 +53,7 @@ public class SoliderMap : MonoBehaviour
 
     protected internal void StartExpanding()
     {
-        GetComponent<Collider2D>().enabled = true;
+        GetComponent<PolygonCollider2D>().enabled = true;
         expanding = true;
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log(collision.relativeVelocity);
     }
 }

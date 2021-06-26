@@ -8,6 +8,7 @@ using UnityEngine;
  *
  * TODO swarm behaviour
  */
+[RequireComponent(typeof(Rigidbody2D))]
 public class SwarmMovement : MonoBehaviour
 {
     [SerializeField] private float velocity = 1f;
@@ -16,13 +17,18 @@ public class SwarmMovement : MonoBehaviour
     [SerializeField] protected internal bool randomizeTarget = true;
     [SerializeField] protected internal Vector3 target = Vector3.zero;
 
+    private Rigidbody2D rb2d;
+
     void OnValidate()
     {
-        SetTarget();
+        //SetTarget();
     }
     
     void Start()
     {
+        rb2d = GetComponent<Rigidbody2D>();
+        rb2d.gravityScale = 0f;
+
         SetTarget();
     }
 
@@ -52,6 +58,9 @@ public class SwarmMovement : MonoBehaviour
         Vector3 direction = target - transform.position;
         Vector3 change = direction * velocity * Time.fixedDeltaTime;
         transform.position += change;
+
+        float angle = Mathf.Atan2(direction.y, direction.x);
+        rb2d.MoveRotation(angle * Mathf.Rad2Deg);
     }
     
     void OnDrawGizmos()

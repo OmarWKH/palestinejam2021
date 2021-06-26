@@ -17,8 +17,8 @@ public class PlayerControls : MonoBehaviour
     [SerializeField] private float maxShrink = 1f;
     private bool shouldDash = false;
     private bool dashing = false;
-    private Vector3 dashStartPosition;
-    private Vector3 dashTarget;
+    private Vector2 dashStartPosition;
+    private Vector2 dashTarget;
 
     [Header("Trap")]
     [SerializeField] private LayerMask trapLayers;
@@ -30,6 +30,11 @@ public class PlayerControls : MonoBehaviour
     [SerializeField] private float evictionVelocity = 100f;
     [SerializeField] private float evictionDuration = 0.3f;
 
+    [SerializeField] private PhysicsMaterial2D bouncy;
+
+    [SerializeField] private Sprite[] hitSprites;
+    [SerializeField] private Beat beat;
+
     private float trapVelocityFactor = 1f;
     private bool trapped = false;
     private bool shouldEvict = false;
@@ -38,54 +43,134 @@ public class PlayerControls : MonoBehaviour
 
     private Rigidbody2D rb2d;
 
+    protected internal bool endGame = false;
+
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        //originalScale = transform.localScale;
+        shrinkEndGame = maxShrink;
+        hitCount = hitToEnd;
     }
 
+    //private float scaleDown = 1f;
+    //private Vector2 originalScale;
+    [SerializeField] private int hitToEnd = 3;
+    [SerializeField] private float shrinkEndGame = 1f;
+    private int hitCount;
+    private bool canDash = true;
+
+    [SerializeField] private float coolDown = 3f;
+    private float lastHit = -1f;
+    private bool locked;
     void Update()
     {
+        locked = Time.time - lastHit <= coolDown;
+
         walkDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        if (!shouldDash)
+
+        if (locked)
+        {
+            walkDirection = Vector2.zero;
+        }
+
+        if (endGame)
+        {
+            rb2d.sharedMaterial = bouncy;
+            walkMethod = WalkMethod.AddForceImpulse;
+            rb2d.drag = 20;
+            walkMagnitude = new Vector2(2, 2);
+            dashForce = 10;
+            //if (Input.GetKey(KeyCode.Mouse0))
+            //{
+            //    scaleDown -= 0.01f;
+            //}
+            //if (!shouldDash)
+            //{
+            //    shouldDash = Input.GetKeyDown(KeyCode.Mouse0);
+            //    if (shouldDash)
+            //    {
+            //        dashTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //    }
+            //}
+        }
+
+        //if (canDash && Input.GetKeyDown(KeyCode.Mouse0))
+        //{
+        //    dashStartPosition = transform.position;
+        //    dashing = true;
+        //    canDash = false;
+        //}
+
+        //if (Input.GetKeyUp(KeyCode.Mouse0))
+        //{
+        //    dashing = false;
+        //    canDash = true;
+        //}
+
+        if (!locked && endGame && !shouldDash)
         {
             shouldDash = Input.GetKeyDown(KeyCode.Mouse0);
+            if (shouldDash)
+            {
+                dashTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                //dashTarget.z = 0f;
+            }
         }
-        dashTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
+    //private float dashDuration = 1f;
+    //private float dashTimer = 0f;
     void FixedUpdate()
     {
-        if (shouldEvict)
-        {
-            evictTimer = evictionDuration;
-            shouldEvict = false;
-            shouldDash = false;
-        }
-        
+        //if (shouldEvict)
+        //{
+        //    evictTimer = evictionDuration;
+        //    shouldEvict = false;
+        //    shouldDash = false;
+        //}
+
         if (shouldDash)
         {
             dashing = true;
             shouldDash = false;
-            dashStartPosition = transform.position;
+            //dashTimer = 0f;
+            //dashStartPosition = transform.position;
         }
 
-        if (evictTimer > 0f)
+        if (dashing)
         {
-            rb2d.velocity = new Vector2(0, evictionVelocity);
-            evictTimer -= Time.fixedDeltaTime;
-        }
-        else if (dashing)
-        {
-            Vector2 direction = dashTarget - transform.position;
+            //dashTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3[] line = new Vector3[2];
+            line[0] = dashStartPosition;
+            line[1] = dashTarget;
+            FindObjectOfType<LineRenderer>().SetPositions(line);
+            Vector2 direction = dashTarget - (Vector2)transform.position;
+            //rb2d.MovePosition(dashTarget * Time.fixedDeltaTime);
+            //Vector2 velocity = rb2d.velocity;
+            // v' = ds / dt
+            // vf - vi = ds / dt
+            //  vf = ds / dt + vi
+            //velocity.x += (dashTarget.x - transform.position.x) / 1f;
+            //velocity.y += (dashTarget.y - transform.position.y) / 1f;
+            //rb2d.velocity = velocity;
             rb2d.AddForce(direction * dashForce, ForceMode2D.Impulse);
-            if (direction.magnitude <= 0.01f)
-            {
-                dashing = false;
-            }
+            //dashTimer += Time.fixedDeltaTime;
+            //rb2d.MovePosition(Vector2.Lerp(transform.position, dashTarget, dashTimer/dashDuration));
+            //if (direction.magnitude <= 0.01f)
+            //{
+            //    dashing = false;
+            //}
+            //if (direction.magnitude <= 0.1f)
+            //{
+            //    dashing = false;
+            //scaleDown = 1f;
+            //}
         }
-        {
-            Move(walkDirection, walkMagnitude);
-        }
+        
+        Move(walkDirection, walkMagnitude);
+
+        //transform.localScale = scaleDown * originalScale;
     }
 
     private static float InitialVelocity(float direction, float distance, float time, float finalVelocity)
@@ -115,64 +200,104 @@ public class PlayerControls : MonoBehaviour
             default:
                 break;
         }
+
+        //Vector3 directionVector = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        //float angle = Mathf.Atan2(directionVector.y, directionVector.x);
+        
+        //rb2d.MoveRotation(90);
     }
+    
+    private int spriteIndex = 0;
 
-    IEnumerator Trap()
+    [SerializeField] private float maxPushTime = 3f;
+    private float pushTimer = 0f;
+    void OnCollisionStay2D(Collision2D collision)
     {
-        transform.position = trap.transform.position;
-
-        rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
-        yield return new WaitForSeconds(trappedSeconds);
-        rb2d.constraints = RigidbodyConstraints2D.None;
-
-        shouldEvict = true;
-
-        trapVelocityFactor = slowFactor;
-        yield return new WaitForSeconds(trappedSeconds);
-        trapVelocityFactor = 1f;
-    }
-
-    IEnumerator Untrap()
-    {
-        yield return new WaitForSeconds(slowSecondsAfterTrap);
-        if (!trapped)
-        {
-            trapVelocityFactor = 1f;
-        }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (dashing)
+        if (endGame && dashing)
         {
             dashing = false;
 
-            SoliderMap map = collision.gameObject.GetComponent<SoliderMap>();
-            if (map != null)
+            Hit(collision);
+        }
+
+        if (!endGame)
+        {
+            pushTimer += Time.deltaTime;
+            if (pushTimer < maxPushTime)
             {
-                float distance = (transform.position - dashStartPosition).magnitude;
-                map.Scale(-distance/10f * maxShrink);
+                Push(collision);
+            }
+            else
+            {
+                rb2d.AddForce(rb2d.position);
+                //rb2d.velocity = collision.relativeVelocity;
             }
         }
-
     }
 
-    void OnTriggerEnter2D(Collider2D collider)
+
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (GetComponent<CircleCollider2D>().IsTouchingLayers(trapLayers))
+        if (endGame && dashing)
         {
-            trapped = true;
-            trap = collider.gameObject;
-            StartCoroutine(Trap());
+            dashing = false;
+
+            Hit(collision);
         }
     }
 
-    void OnTriggerExit2D(Collider2D collider)
+    void OnCollisionExit2D(Collision2D collision)
     {
-        if (GetComponent<CircleCollider2D>().IsTouchingLayers(trapLayers))
+        pushTimer = 0f;
+        SoliderMap map = collision.gameObject.GetComponent<SoliderMap>();
+        if (map != null)
         {
-            trapped = false;
-            //StartCoroutine(Untrap());
+            map.expanding = true;
+        }
+    }
+
+    void Push(Collision2D collision)
+    {
+        SoliderMap map = collision.gameObject.GetComponent<SoliderMap>();
+        if (map != null)
+        {
+            map.expanding = false;
+            //float distance = ((Vector2)transform.position - dashStartPosition).magnitude;
+            //map.Scale(-distance / 10f * maxShrink);
+        }
+    }
+
+    void Hit(Collision2D collision)
+    {
+        // stop moving for a time, and fade in out or change color
+        SoliderMap map = collision.gameObject.GetComponent<SoliderMap>();
+        if (map != null)
+        {
+            if (!endGame)
+            {
+                float distance = ((Vector2)transform.position - dashStartPosition).magnitude;
+                map.Scale(-distance / 10f * maxShrink);
+            }
+            else
+            {
+                lastHit = Time.time;
+                hitCount--;
+                //Color color = GetComponent<SpriteRenderer>().color;
+                //color.a = (hitCount + 1f) / hitToEnd;
+                //GetComponent<SpriteRenderer>().color = color;
+                GetComponent<SpriteRenderer>().sprite = hitSprites[spriteIndex];
+                spriteIndex = Mathf.Min(spriteIndex + 1, hitSprites.Length - 1);
+                map.Scale(-shrinkEndGame);
+
+                if (hitCount <= 0)
+                {
+                    FindObjectOfType<ScenarioManager>().FadeOut();
+                }
+                else
+                {
+                    beat.StartBeat(coolDown);
+                }
+            }
         }
     }
 }
